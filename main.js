@@ -11,8 +11,6 @@ import {
   query,
   orderBy
 } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js'
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
 const firebaseConfig = {
   apiKey: "AIzaSyDFYmmVvk-jLZIeAdYKiTwVw2jqd4VINFA",
   authDomain: "insan-cemerlang.firebaseapp.com",
@@ -27,23 +25,6 @@ const aplikasi = initializeApp(firebaseConfig)
 const basisdata = getFirestore(aplikasi)
 
 // fungsi ambil daftar barang
-export async function ambilDaftarBarang() {
-  const refDokumen = collection(basisdata, "inventory");
-  const kueri = query(refDokumen, orderBy("item"));
-  const cuplikanKueri = await getDocs(kueri);
-
-  let hasilKueri = [];
-  cuplikanKueri.forEach((dokumen) => {
-    hasilKueri.push({
-      id: dokumen.id,
-      item: dokumen.data().item,
-      jumlah: dokumen.data().jumlah,
-      harga: dokumen.data().harga
-    })
-  })
-
-  return hasilKueri;
-}
 
 // menambah barang ke keranjang
 export async function tambahBarangKeKeranjang(
@@ -72,3 +53,20 @@ export async function tambahBarangKeKeranjang(
     console.log(error)    
   }
 } 
+ export async function ambilDaftarBarang() {
+  const refDokumen = collection(basisdata, "inventory");
+  const kueri = query(refDokumen, orderBy("item"));
+  const cuplikanKueri = await getDocs(kueri);
+
+  let hasilKueri = [];
+  cuplikanKueri.forEach((dokumen) => {
+    hasilKueri.push({
+      id: dokumen.id,
+      item: dokumen.data().item,
+      jumlah: dokumen.data().jumlah,
+      harga: dokumen.data().harga
+    })
+  })
+
+  return hasilKueri;
+}
