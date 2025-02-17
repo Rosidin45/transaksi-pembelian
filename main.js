@@ -117,3 +117,7 @@ export async function ambilDaftarBarangDiKeranjang() {
 
   return hasilKueri;
 }
+
+export async function hapusbarangdarikeranjang(id){ 
+await delete(doc(basisdata, "transaksi",id))
+}
