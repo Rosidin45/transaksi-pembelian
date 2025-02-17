@@ -9,7 +9,8 @@ import {
   deleteDoc,
   updateDoc,
   query,
-  orderBy
+  orderBy, 
+  where
 } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js'
 const firebaseConfig = {
   apiKey: "AIzaSyDFYmmVvk-jLZIeAdYKiTwVw2jqd4VINFA",
@@ -20,11 +21,31 @@ const firebaseConfig = {
   appId: "1:579109661574:web:4a7cd4060f70eded945a07"
 };
 
+
 //inisialisasi firebase
 const aplikasi = initializeApp(firebaseConfig)
 const basisdata = getFirestore(aplikasi)
 
+
 // fungsi ambil daftar barang
+export async function ambilDaftarBarang() {
+  const refDokumen = collection(basisdata, "inventory");
+  const kueri = query(refDokumen, orderBy("item"));
+  const cuplikanKueri = await getDocs(kueri);
+
+
+  let hasilKueri = [];
+  cuplikanKueri.forEach((dokumen) => {
+    hasilKueri.push({
+      id: dokumen.id,
+      item: dokumen.data().item,
+      jumlah: dokumen.data().jumlah,
+      harga: dokumen.data().harga
+    })
+  })
+  return hasilKueri;
+}
+
 
 // menambah barang ke keranjang
 export async function tambahBarangKeKeranjang(
@@ -36,7 +57,25 @@ export async function tambahBarangKeKeranjang(
   namapelanggan
 ) {
   try {
-    // menyimpan data ke collection transaksi
+    //periksa apakah idbarang sudah ada di collection transaksi? 
+    //mengambil data di seluruh collection transaksi
+    let refDokumen = collection(basisdata, "transaksi")
+    
+    //membuat query untuk mencari data berdasarkan idbarang
+  let queryBarang = query(refDokumen, where("idbarang", "==",idbarang))
+  
+    let snapshotBarang = await getDocs(queryBarang)
+    let jumlahRecord = 0
+    let idtransaksi = ''
+    let jumlahsebelumnya = 0
+    
+    snapshotBarang.forEach((dokumen) => {
+      jumlahRecord++
+      idtransaksi = dokumen.id
+      jumlahSebelumnya = dokumen.data().jumlah
+    })
+    if(jumlahRecord==0){
+    // kalau belum ada, tambahkan langsung ke collection
     const refDokumen = await addDoc(collection(basisdata, "transaksi"), {
       idbarang: idbarang,
       nama: nama,
@@ -46,23 +85,31 @@ export async function tambahBarangKeKeranjang(
       namapelanggan: namapelanggan
     })
     
+    
+} else if (jumlahRecord == 1){
+  // kalau sudah ada, ditambahkan jumlahnya saja
+  jumlahsebelumnya++
+  await updateDoc(doc(basisdata, "transaksi", idtransaksi),{jumlah: jumlahsebelumnya})
+}
     // menampilkan pesan berhasil
     console.log("berhasil menyimpan keranjang")
-  } catch (error) {
+  }catch (error) {
     // menampilkan pesan gagal
-    console.log(error)    
+    console.log(error)
   }
-} 
- export async function ambilDaftarBarang() {
-  const refDokumen = collection(basisdata, "inventory");
-  const kueri = query(refDokumen, orderBy("item"));
+}
+
+// menampilkan barang di keranjang
+export async function ambilDaftarBarangDiKeranjang() {
+  const refDokumen = collection(basisdata, "transaksi");
+  const kueri = query(refDokumen, orderBy("nama"));
   const cuplikanKueri = await getDocs(kueri);
 
   let hasilKueri = [];
   cuplikanKueri.forEach((dokumen) => {
     hasilKueri.push({
       id: dokumen.id,
-      item: dokumen.data().item,
+      nama: dokumen.data().nama,
       jumlah: dokumen.data().jumlah,
       harga: dokumen.data().harga
     })
