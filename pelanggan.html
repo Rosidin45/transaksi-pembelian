@@ -27,9 +27,21 @@
       </tr>
     </thead>
     <tbody>
-    </tbody>
   </table>
-    
+  
+  <h3>daftar pelanggan</h3>
+      <table class="table table-striped-columns table-bordered border-primary" id="daftar-keranjang">
+    <thead class="table-primary">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">nama</th>
+        <th scope="col">no hp</th>
+        <th scope="col">alamat</th>
+         <th scope="col">aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+  </table>
     <script type="module">
     import { ambilDaftarBarangDiKeranjang,hapusbarangdarikeranjang} from './main.js'; 
       $(document).ready(async function(){
@@ -60,7 +72,7 @@
       }
         
         await tampilBarangDiKeranjang()
-        
+          
         //menghapus item dari keranjang
         $("#daftar-keranjang > tbody").on('click','.link-hapus',async function() {
         await hapusBarangDarikeranjang($(this).attr('data'))
