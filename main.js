@@ -137,4 +137,17 @@ await delete(doc(basisdata, "transaksi",id))
   })
 
   return hasilKueri;
+  
+  export async function ambilBarangProsesDikeranjang()
+  let refDokumen = collection(basisdata, "transaksi")
+  
+  //membuat query untuk mencari data Yang masih proses
+  let queryBarangProses = query(refDokumen, where("idpelanggan","==","proses"))
+  
+  let snapshotBarang = await getDocs(queryBarangProses)
+  let hasilkueri = []
+  snapshotBarang.forEach((dokumen) => {
+    hasilkueri.push({
+    
+  })
 }
