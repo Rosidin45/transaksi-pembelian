@@ -28,9 +28,10 @@
     </thead>
     <tbody>
   </table>
+
   
   <h3>daftar pelanggan</h3>
-      <table class="table table-striped-columns table-bordered border-primary" id="daftar-keranjang">
+      <table class="table table-striped-columns table-bordered border-primary" id="daftar-pelanggan">
     <thead class="table-primary">
       <tr>
         <th scope="col">#</th>
@@ -43,7 +44,7 @@
     <tbody>
   </table>
     <script type="module">
-    import { ambilDaftarBarangDiKeranjang,hapusbarangdarikeranjang} from './main.js'; 
+    import { ambilDaftarBarangDiKeranjang,hapusbarangdarikeranjang, ambilDaftarPelanggan} from './main.js'; 
       $(document).ready(async function(){
         async function tampilBarangDiKeranjang() {
         // menampilkan daftar barang yang ada di keranjang
@@ -79,6 +80,24 @@
         
         //refresh halaman
         location.reload()
+      }) 
+      let elemenDaftarPelanggan = $("#daftar-pelanggan > tbody");
+      let daftarPelanggan = await ambilDaftarPelanggan();
+
+
+      let nomor = 1
+      daftarPelanggan.forEach((data) => {
+        elemenDaftarPelanggan.append(
+          "<tr>" +
+          "<td>" + nomor + "</td>" +
+          "<td>" + data.nama + "</td>" +
+          "<td>" + data.alamat + "</td>" +
+          "<td>" + data.nohape + "</td>" +
+          "<td>" + "<button class='btn btn-succes tombol-pilih' data='" + data.id + "'>pilih</button> " + "</td>" +
+          "</tr>"
+        )
+        nomor = nomor + 1
+      })
       }) 
     </script>
 <html>
