@@ -1,5 +1,6 @@
-<!DOCTYPE html> 
+ <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,15 +8,16 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-
+  
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 
 <body class="m-3">
   <h1 class="text-center">Toko Incer</h1>
   
-  <a href="index.html"></a>
-    <h3>Keranjang Belanja</h3>
+  <a href="index.html">Kembali ke Daftar Barang</a>
+  
+  <h3 id="keranjang">Keranjang Belanja</h3>
   <table class="table table-striped-columns table-bordered border-primary" id="daftar-keranjang">
     <thead class="table-primary">
       <tr>
@@ -27,35 +29,39 @@
       </tr>
     </thead>
     <tbody>
+    </tbody>
   </table>
-
   
-  <h3>daftar pelanggan</h3>
-      <table class="table table-striped-columns table-bordered border-primary" id="daftar-pelanggan">
-    <thead class="table-primary">
+  <h3>Daftar Pelanggan</h3>
+  <table class="table table-striped-columns table-bordered border-primary" id="daftar-pelanggan">
+    <thead class="table-success">
       <tr>
         <th scope="col">#</th>
-        <th scope="col">nama</th>
-        <th scope="col">no hp</th>
-        <th scope="col">alamat</th>
-         <th scope="col">aksi</th>
+        <th scope="col">Nama</th>
+        <th scope="col">Alamat</th>
+        <th scope="col">No HP</th>
+        <th scope="col">Aksi</th>
       </tr>
     </thead>
     <tbody>
+    </tbody>
   </table>
-    <script type="module">
-    import { ambilDaftarBarangDiKeranjang,hapusbarangdarikeranjang, ambilDaftarPelanggan} from './main.js'; 
-      $(document).ready(async function(){
-        async function tampilBarangDiKeranjang() {
+  
+  
+  <script type="module">
+    import { ambilDaftarBarangDiKeranjang, hapusBarangDariKeranjang, ambilDaftarPelanggan, ubahBarangProsesDikeranjang } from './main.js';
+    
+    $(document).ready(async function() {
+      async function tampilBarangDiKeranjang() {
         // menampilkan daftar barang yang ada di keranjang
         let elemenDaftarBarangDiKeranjang = $("#daftar-keranjang > tbody")
         let daftarBarangDiKeranjang = await ambilDaftarBarangDiKeranjang()
         let nomorKeranjang = 1
         let totalKeranjang = 0
-
+        
         // mengosongkan daftar barang sebelumnya
         elemenDaftarBarangDiKeranjang.empty()
-
+        
         daftarBarangDiKeranjang.forEach((data) => {
           elemenDaftarBarangDiKeranjang.append(
             "<tr>" +
@@ -63,27 +69,27 @@
             "<td>" + data.nama + "</td>" +
             "<td>" + data.harga + "</td>" +
             "<td>" + data.jumlah + "</td>" +
-            "<td>" + "<a href='#' class='link'-hapus'data='" + data.id + "'><i class='bi bi-trash'></i></a>" + "</td>" +
+            "<td>" + "<a href='#' class='link-hapus' data='" + data.id + "'><i class='bi bi-trash'></i></a>" + "</td>" +
             "</tr>"
           )
-
+          
           nomorKeranjang++
         })
         // selesai menampilkan barang di keranjang
       }
+      
+      await tampilBarangDiKeranjang()
+      
+      // menghapus item dari keranjang
+      $("#daftar-keranjang > tbody").on('click', '.link-hapus', async function() {
+        await hapusBarangDariKeranjang($(this).attr('data'))
         
-        await tampilBarangDiKeranjang()
-          
-        //menghapus item dari keranjang
-        $("#daftar-keranjang > tbody").on('click','.link-hapus',async function() {
-        await hapusBarangDarikeranjang($(this).attr('data'))
-        
-        //refresh halaman
+        // refresh halaman
         location.reload()
-      }) 
+      })
+      
       let elemenDaftarPelanggan = $("#daftar-pelanggan > tbody");
-      let daftarPelanggan = await ambilDaftarPelanggan();
-
+      let daftarPelanggan = await ambilDaftarPelanggan()
 
       let nomor = 1
       daftarPelanggan.forEach((data) => {
@@ -93,25 +99,34 @@
           "<td>" + data.nama + "</td>" +
           "<td>" + data.alamat + "</td>" +
           "<td>" + data.nohape + "</td>" +
-          "<td>" + "<button class='btn btn-succes tombol-pilih' data='" + data.id + "'data-nama='"+data.nama + "'>pilih</button> " + "</td>" +
+          "<td>" + "<button class='btn btn-success tombol-pilih' data='" + data.id + "' data-nama='" + data.nama + "'>pilih</button> " + "</td>" +
           "</tr>"
-        ) 
+        )
         nomor = nomor + 1
-        
       })
-      //selesai memilih pelanggan 
-      $(".tombol-pilih").click(async function(){
-        //mengambil data pelanggan 
-        let idpelaggan = $(this).attr('data')
-        let namapelanggan = (this).attr('data-nama')
-        //cari data collection transaksi yang id dana nama pelanggan = proses 
+
+      // memilih pelanggan      
+      $(".tombol-pilih").click(async function() {
+        // mengambil data pelanggan
+        let idpelanggan = $(this).attr('data')
+        let namapelanggan = $(this).attr('data-nama')
         
+        console.log(idpelanggan+","+namapelanggan)
+        // cari data collection transaksi yang id dan nama pelanggan = proses
         
-        //update data di collection transaksi tersebut
-        //pergi ke halaman cetak nota 
-      }) 
-      
-      )
-      }) 
-    </script>
-<html>
+        let daftarbarangproses = await ambilDaftarBarangDiKeranjang()
+        
+        daftarbarangproses.forEach((data) => {
+  
+})       
+        
+        // update data di collection transaksi tersebut
+        // pergi ke halaman cetak nota
+      })
+      // selesai memilih pelanggan
+    })
+  </script>
+  
+</body>
+
+</html> 
